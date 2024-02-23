@@ -59,4 +59,4 @@ jobs:
       - name: Build, test, and upload image
         run: |
           docker build -t registry.webis.de/code-research/tira/tira-user-qspell/qspell-submission:0.0.1 .
-          tira-run --input-dataset workshop-on-open-web-search/query-processing-20231027-trainings --command "python3 /code/correct_query.py ${{ inputs.args }}" --image registry.webis.de/code-research/tira/tira-user-qspell/qspell-submission:0.0.1 --push true
+          tira-run --input-dataset workshop-on-open-web-search/query-processing-20231027-training --command "python3 /code/correct_query.py ${{ inputs.args }}" --image registry.webis.de/code-research/tira/tira-user-qspell/qspell-submission:0.0.1 --push true
