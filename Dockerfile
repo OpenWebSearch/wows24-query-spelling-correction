@@ -1,3 +1,4 @@
+#docker build -t webis/query-spelling-correction:0.0.1 .
 FROM ubuntu:22.04
 
 # Install dependencies

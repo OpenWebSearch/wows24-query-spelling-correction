@@ -10,32 +10,38 @@ def process_queries(queries_iter, params):
     return pd.DataFrame([process_query(i, params) for i in queries_iter])
 
 
+def parse_args():
+    import argparse
+    parser = argparse.ArgumentParser(description='correct_query')
+    parser.add_argument('--method', type=str, default='rushton', help='Method to use for correction')
+    parser.add_argument('--max_cosine', type=float, default=1.0, help='Maximum cosine similarity to consider a word as correct')
+    parser.add_argument('--dataset', type=str, default='workshop-on-open-web-search/query-processing-20231027-training', help='The tira/ir_dataset id to process')
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
+    args = parse_args()
     # In the TIRA sandbox, this is the injected ir_dataset, injected via the environment variable TIRA_INPUT_DIRECTORY
-    dataset = ir_datasets.load('workshop-on-open-web-search/query-processing-20231027-training')
+    dataset = ir_datasets.load(args.dataset)
 
     # The expected output directory, injected via the environment variable TIRA_OUTPUT_DIRECTORY
     output_dir = get_output_directory('.')
     
-    # Query processors persist their results in a file queries.jsonl in the output directory.
     output_file = Path(output_dir) / 'queries.jsonl'
-    
-    # You can pass as many additional arguments to your program, e.g., via argparse, to modify the behaviour
 
-    method = 'rushton'
 
-    if method == 'rushton':
+    if args.method == 'rushton':
         from correct_word_rushton import correct_word
-    elif method == 'pyspell':
+    elif args.method == 'pyspell':
         from correct_word_pyspell import correct_word
-    elif method == 'hunspell':
+    elif args.method == 'hunspell':
         from correct_word_hunspell import correct_word
+    else:
+        raise ValueError(f'Unknown method {args.method}')
         
     params = {
-        'max_cosine': 1.0
+        'max_cosine': args.max_cosine
     }
-    
-    #TODO: allow to overwrite method and max_cosine using command line args
     
     # process the queries, store results at expected location.
     processed_queries = process_queries(dataset.queries_iter(), params)
