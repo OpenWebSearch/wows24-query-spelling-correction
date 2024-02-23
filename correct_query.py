@@ -1,6 +1,7 @@
 from tira.third_party_integrations import ir_datasets, get_output_directory
 from pathlib import Path
 import pandas as pd
+from tqdm import tqdm
 
 def process_query(query, params):
     return {'qid': query.query_id, 'query': ' '.join([correct_word(w, params) for w in query.default_text().split(' ')])}
@@ -44,5 +45,5 @@ if __name__ == '__main__':
     }
     
     # process the queries, store results at expected location.
-    processed_queries = process_queries(dataset.queries_iter(), params)
+    processed_queries = process_queries(tqdm(list(dataset.queries_iter())), params)
     processed_queries.to_json(output_file, lines=True, orient='records')
